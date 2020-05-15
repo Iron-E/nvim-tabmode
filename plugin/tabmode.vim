@@ -3,8 +3,6 @@ if exists('g:loaded_tabmode')
 endif
 let g:loaded_tabmode = 1
 
-execute 'source' expand('<sfile>:p:h') . '/callback/tabmode.vim'
-
 if !hasmapto('<Plug>TabmodeEnter')
 	silent! nmap <unique> <leader><Tab> <Plug>TabmodeEnter
 endif

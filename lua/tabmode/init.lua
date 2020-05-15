@@ -43,7 +43,7 @@ local _shift_right = {'W', 'K', 'L', "<S-Right>"}
 
 function tabmode._callback()
 	-- local uinput = string.char(vim.api.nvim_get_var('tabsModeInput'))
-	local uinput = vim.api.nvim_get_var('tabsModeInput')
+	local uinput = string.char(vim.api.nvim_get_var('tabsModeInput'))
 
 	    if _contains(_go_to_beginning , uinput) then _api.nvim_command('tabfirst'   )
 	elseif _contains(_move_left       , uinput) then _api.nvim_command('tabprevious')
