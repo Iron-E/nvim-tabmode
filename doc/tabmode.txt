@@ -1,0 +1,57 @@
+*tabmode.txt*          Plugin for managing tabs
+*tabmode*
+
+Author: Iron-E – https://github.com/Iron-E & https://gitlab.com/Iron_E
+Web: https://github.com/Iron-E/tabmode
+
+1. Requirements                            |tabmode-requirements|
+2. Usage                                   |tabmode-usage|
+3. Configuration                           |tabmode-configuration|
+
+|tabmode| is a Vim plugin for managing windows. Built-in functionality includes
+window selection, window buffer swapping, and window resizing. The plugin is
+extensible, allowing additional functionality to be added (see
+|tabmode-configuration| below).
+
+============================================================================
+1. Requirements                            *tabmode-requirements*
+
+* nvim-libmodal
+	* https://github.com/Iron-E/nvim-libmodal
+
+============================================================================
+2. Usage                                   *tabmode-usage*
+
+                                                               *:TabmodeEnter*
+Enter |tabmode| with <leader><Tab> or |:TabmodeEnter|.
+
+Key         Use
+---         ---
+`<Esc>`     Leave `tabmode`
+`?`         Show help message
+`^`/`0`     Go to the beginning of the tab list.
+`<S-0>`     Move the current tab to the beginning of the tab list.
+`$`         Go to the end of the tab list.
+`%`         Move the current tab to the end of the tab list.
+`b`/`j`/`h` Tab left
+`w`/`k`/`l` Tab right
+`a`         Append a tab and switch to it.
+`A`         Append a tab to the end and switch to it.
+`i`         Prepend a tab and switch to it.
+`I`         Prepend a tab to the beginning and switch to it.
+`d`         Delete the current tab.
+`s`         Replace the current tab with a new tab.
+
+============================================================================
+3. Configuration                           *tabmode-configuration*
+
+By default, |tabmode| is started with <leader><Tab> or |:TabmodeEnter|. If
+any mapping for |<Plug>TabmodeEnter| is detected, this default will not
+load.
+
+>
+	map <leader><Tab> <Plug>TabmodeEnter
+<
+
+============================================================================
+ vim:tw=78:ts=4:ft=help:norl:
