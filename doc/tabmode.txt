@@ -16,11 +16,10 @@ extensible, allowing additional functionality to be added (see
 2. Usage ................... |tabmode-usage|
 3. Configuration ........... |tabmode-configuration|
 
-
 ==============================================================================
 1. Requirements                                         *tabmode-requirements*
 
-* nvim-libmodal
+* |nvim-libmodal|
 	* https://github.com/Iron-E/nvim-libmodal
 
 ==============================================================================
