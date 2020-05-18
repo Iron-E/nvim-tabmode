@@ -16,16 +16,16 @@ Either use `packadd` or any package manager.
 ## Examples
 
 * [dein.vim](https://github.com/Shougo/dein.vim):
-	* Add `call dein#add('https://github.com/Iron_E/nvim-tabmode')` to `~/.vimrc`
+	* Add `call dein#add('https://github.com/Iron-E/nvim-tabmode')` to `~/.vimrc`
 	* `:call dein#install()`
 * [NeoBundle](https://github.com/Shougo/neobundle.vim):
-	* Add `NeoBundle 'https://github.com/Iron_E/nvim-tabmode'` to `~/.vimrc`
+	* Add `NeoBundle 'https://github.com/Iron-E/nvim-tabmode'` to `~/.vimrc`
 	* Re-open vim or execute `:source ~/.vimrc`
 * [vim-plug](https://github.com/junegunn/vim-plug):
-	* Add `Plug 'https://github.com/Iron_E/nvim-tabmode'` to `~/.vimrc`
+	* Add `Plug 'https://github.com/Iron-E/nvim-tabmode'` to `~/.vimrc`
 	* `:PlugInstall` or `$ vim +PlugInstall +qall`
 * [Vundle](https://github.com/gmarik/vundle):
-	* Add `Plugin 'https://github.com/Iron_E/nvim-tabmode'` to `~/.vimrc`
+	* Add `Plugin 'https://github.com/Iron-E/nvim-tabmode'` to `~/.vimrc`
 	* `:PluginInstall` or `$ vim +PluginInstall +qall`
 
 # Usage
