@@ -8,7 +8,7 @@ if !hasmapto('<Plug>TabmodeEnter')
 endif
 
 nnoremap <unique> <silent> <script> <Plug>TabmodeEnter <SID>TabmodeEnter
-nnoremap <SID>TabmodeEnter :<C-u>lua require('tabmode').enter()<CR>
+nnoremap <SID>TabmodeEnter :<C-u>lua require('tabmode'):enter()<CR>
 
 if !exists(':TabmodeEnter')
 	command! TabmodeEnter :call <Plug>TabmodeEnter
