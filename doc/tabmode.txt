@@ -10,22 +10,24 @@ extensible, allowing additional functionality to be added (see
 |tabmode-configuration| below).
 
 ==============================================================================
-0. Table of Contents                                             *tabmode-toc*
+0. Table of Contents                                               *tabmode-toc*
 
 1. Requirements ............ |tabmode-requirements|
 2. Usage ................... |tabmode-usage|
 3. Configuration ........... |tabmode-configuration|
 
 ==============================================================================
-1. Requirements                                         *tabmode-requirements*
+1. Requirements                                           *tabmode-requirements*
 
 * |nvim-libmodal|
 	* https://github.com/Iron-E/nvim-libmodal
 
 ==============================================================================
-2. Usage                                                       *tabmode-usage*
+2. Usage                                                         *tabmode-usage*
 
-Enter |tabmode| with <leader><Tab> or |:TabmodeEnter|.         *:TabmodeEnter*
+                                                                 *:TabmodeEnter*
+                                                          *<Plug>(TabmodeEnter)*
+Enter |tabmode| with <leader><Tab> or |:TabmodeEnter|.
 
 Key             Use
 -----           ------------------------------------------------------
@@ -45,7 +47,7 @@ Key             Use
 `s`               Replace the current tab with a new tab.
 
 ==============================================================================
-3. Configuration                                       *tabmode-configuration*
+3. Configuration                                         *tabmode-configuration*
 
 By default, |tabmode| is started with <leader><Tab> or |:TabmodeEnter|. If
 any mapping for |<Plug>TabmodeEnter| is detected, this default will not
