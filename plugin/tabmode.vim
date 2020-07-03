@@ -3,13 +3,9 @@ if exists('g:loaded_tabmode')
 endif
 let g:loaded_tabmode = 1
 
-if !hasmapto('<Plug>TabmodeEnter')
-	silent! nmap <unique> <leader><Tab> <Plug>TabmodeEnter
-endif
-
-nnoremap <unique> <silent> <script> <Plug>TabmodeEnter <SID>TabmodeEnter
-nnoremap <SID>TabmodeEnter :<C-u>lua require('tabmode'):enter()<CR>
+nnoremap <silent> <unique> <Plug>(TabmodeEnter) <Cmd>lua require('tabmode'):enter()<CR>
+nmap <silent> <unique> <leader><Tab> <Plug>(TabmodeEnter)
 
 if !exists(':TabmodeEnter')
-	command! TabmodeEnter :call <Plug>TabmodeEnter
+	command! TabmodeEnter lua require('tabmode'):enter()
 endif
