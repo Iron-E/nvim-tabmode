@@ -29,22 +29,24 @@ extensible, allowing additional functionality to be added (see
                                                           *<Plug>(TabmodeEnter)*
 Enter |tabmode| with <leader><Tab> or |:TabmodeEnter|.
 
-Key             Use
------           ------------------------------------------------------
-`<Esc>`           Leave `tabmode`
-`?`               Show help message
-`^`/`0`             Go to the beginning of the tab list.
-`<S-0>`           Move the current tab to the beginning of the tab list.
-`$`               Go to the end of the tab list.
-`%`               Move the current tab to the end of the tab list.
-`b`/`j`/`h`           Tab left
-`w`/`k`/`l`           Tab right
-`a`               Append a tab and switch to it.
-`A`               Append a tab to the end and switch to it.
-`i`               Prepend a tab and switch to it.
-`I`               Prepend a tab to the beginning and switch to it.
-`d`               Delete the current tab.
-`s`               Replace the current tab with a new tab.
+Key                                       Use
+----------------------------------------  ------------------------------------------------------
+<Esc>                                     Leave `tabmode`
+`?`                                         Show help message
+`^`,`0`,<Home>,<Up>                           Go to the beginning of the tab list.
+<S-0>,<S-Home>,<S-Up>                     Move the current tab to the beginning of the tab list.
+`$`,<End>,<Down>                            Go to the end of the tab list.
+`%`,<S-End>,<S-Down>                        Move the current tab to the end of the tab list.
+`b`,`j`,`h`,<Left>,<PageUp>                     Tab left.
+`w`,`k`,`l`,<Right>,<PageDown>                  Tab right.
+<S-b>,<S-j>,<S-h>,<S-Left>,<S-PageUp>     Move current tab to the left.
+<S-w>,<S-k>,<S-l>,<S-Right>,<S-PageDown>  Move current tab to the right.
+`a`                                         Append a tab and switch to it.
+`A`                                         Append a tab to the end and switch to it.
+`i`                                         Prepend a tab and switch to it.
+`I`                                         Prepend a tab to the beginning and switch to it.
+`d`                                         Delete the current tab.
+`s`                                         Replace the current tab with a new tab.
 
 ==============================================================================
 3. Configuration                                         *tabmode-configuration*
