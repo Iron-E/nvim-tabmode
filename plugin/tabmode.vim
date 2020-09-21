@@ -3,7 +3,7 @@ if exists('g:loaded_tabmode')
 endif
 let g:loaded_tabmode = 1
 
-nnoremap <silent> <unique> <Plug>(TabmodeEnter) <Cmd>lua require('tabmode'):enter()<CR>
+nnoremap <silent> <unique> <Plug>(TabmodeEnter) <Cmd>lua require('tabmode')<CR>
 nmap <silent> <unique> <leader><Tab> <Plug>(TabmodeEnter)
 
 if !exists(':TabmodeEnter')
