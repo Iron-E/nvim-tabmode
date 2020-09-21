@@ -4,9 +4,10 @@
 	 */
 --]]
 
-local contains     = vim.tbl_contains
-local api          = vim.api
-local nvim_command = api.nvim_command
+local vim  = vim
+local cmd  = vim.api.nvim_command
+local eval = vim.api.nvim_eval
+local fn   = vim.api.nvim_call_function
 
 --[[
 	/*
@@ -14,62 +15,86 @@ local nvim_command = api.nvim_command
 	 */
 --]]
 
+-- Wrap some vim command in a function.
+local function _cmd_wrap(command)
+	return function() cmd(command) end
+end
+
+-- the key combos for this mode.
 local _combos = {
-	['%'] = function() nvim_command('$tabmove') end,
-	[')'] = function() nvim_command('0tabmove') end,
-	['?'] = function() nvim_command('help tabmode-usage') end,
-	['a'] = function() nvim_command('tabnew')   end,
-	['A'] = function() nvim_command('$tabnew')  end,
-	['d'] = function() nvim_command('tabclose') end,
-	['i'] = function() nvim_command('-tabnew')  end,
-	['I'] = function() nvim_command('0tabnew')  end,
-	['s'] = function() api.nvim_call_function('execute', {{
-		'tabnew', 'tabprevious', 'tabclose'
-	}}) end,
+	['$'] = _cmd_wrap('tablast'),
+	['%'] = _cmd_wrap('$tabmove'),
+	[')'] = _cmd_wrap('0tabmove'),
+	['0'] = _cmd_wrap('tabfirst'),
+	['?'] = _cmd_wrap('help tabmode-usage'),
+	['a'] = _cmd_wrap('tabnew'),
+	['A'] = _cmd_wrap('$tabnew'),
+	['b'] = _cmd_wrap('tabprevious'),
+	['B'] = _cmd_wrap('-tabmove'),
+	['d'] = _cmd_wrap('tabclose'),
+	['i'] = _cmd_wrap('-tabnew'),
+	['I'] = _cmd_wrap('0tabnew'),
+	['s'] = function()
+		fn('execute', {{'tabnew', 'tabprevious', 'tabclose'}})
+	end,
+	['t'] = function()
+		local dir = fn('input', {'Select New `tcd`: ', '', 'dir'})
+		cmd('tcd '..(dir ~= '' and dir or fn('getcwd', {})))
+	end,
+	['w'] = _cmd_wrap('tabnext'),
+	['W'] = _cmd_wrap('+tabmove'),
 }
 
-local function to_char(val) return api.nvim_eval('"\\'..val..'"') end
-
-local _go_to_beginning    = {'^', '0', to_char('<Home>'),   to_char('<Up>')}
-local _shift_to_beginning = {     ')', to_char('<S-Home>'), to_char('<S-Up>')}
-
-local _go_to_end    = {'$', to_char('<End>'),   to_char('<Down>')}
-local _shift_to_end = {'%', to_char('<S-End>'), to_char('<S-Down>')}
-
-local _go_to_left = {'b', 'j', 'h', to_char('<Left>'),   to_char('<PageUp>')}
-local _shift_left = {'B', 'J', 'H', to_char('<S-Left>'), to_char('<S-PageUp>')}
-
-local _go_to_right = {'w', 'k', 'l', to_char('<Right>'),   to_char('<PageDown>')}
-local _shift_right = {'W', 'K', 'L', to_char('<S-Right>'), to_char('<S-PageDown>')}
-
---[[
-	/*
-	 * MODE "TABS"
-	 */
---]]
-
-local function _modeInstruction()
-	-- Get the raw character value of the input.
-	local uinput = api.nvim_get_var('tabsModeInput')
-	-- If `getchar()` reported a number, convert it back to a character.
-	uinput = (type(uinput) == 'number') and string.char(uinput) or uinput
-
-	-- Determine what to do with the input.
-	    if contains(_go_to_beginning,    uinput) then nvim_command('tabfirst')
-	elseif contains(_shift_to_beginning, uinput) then nvim_command('0tabmove')
-
-	elseif contains(_go_to_end,          uinput) then nvim_command('tablast')
-	elseif contains(_shift_to_end,       uinput) then nvim_command('$tabmove')
-
-	elseif contains(_go_to_left,         uinput) then nvim_command('tabprevious')
-	elseif contains(_shift_left,         uinput) then nvim_command('-tabmove')
-
-	elseif contains(_go_to_right,        uinput) then nvim_command('tabnext')
-	elseif contains(_shift_right,        uinput) then nvim_command('+tabmove')
-
-	elseif _combos[uinput]                       then _combos[uinput]()
-	end
+-- create a `new` link for some `existing` mapping
+local function _combo_link(new, existing)
+	_combos[new] = _combos[existing]
 end
+
+-- Turn some special character value into a character code.
+local function _to_char(val)
+	return eval('"\\'..val..'"')
+end
+
+-- Synonyms for '0'
+_combo_link('^', '0')
+_combo_link(_to_char('<Home>'), '0')
+_combo_link(_to_char('<Up>'), '0')
+
+-- Synonyms for ')'
+_combo_link(_to_char('<S-Home>'), ')')
+_combo_link(_to_char('<S-Up>'), ')')
+
+-- Synonyms for '$'
+_combo_link(_to_char('<End>'), '$')
+_combo_link(_to_char('<Down>'), '$')
+
+-- Synonyms for '%'
+_combo_link(_to_char('<S-End>'), '%')
+_combo_link(_to_char('<S-Down>'), '%')
+
+-- Synonyms for 'b'
+_combo_link('j', 'b')
+_combo_link('h', 'b')
+_combo_link(_to_char('<Left>'), 'b')
+_combo_link(_to_char('<PageUp>'), 'b')
+
+-- Synonyms for 'B'
+_combo_link('J', 'B')
+_combo_link('H', 'B')
+_combo_link(_to_char('<S-Left>'), 'B')
+_combo_link(_to_char('<S-PageUp>'), 'B')
+
+-- Synonyms for 'w'
+_combo_link('k', 'w')
+_combo_link('l', 'w')
+_combo_link(_to_char('<Right>'), 'w')
+_combo_link(_to_char('<PageDown>'), 'w')
+
+-- Synonyms for 'W'
+_combo_link('K', 'W')
+_combo_link('L', 'W')
+_combo_link(_to_char('<S-Right>'), 'W')
+_combo_link(_to_char('<S-PageDown>'), 'W')
 
 --[[
 	/*
@@ -77,4 +102,4 @@ end
 	 */
 --]]
 
-return require('libmodal').Mode.new('TABS', _modeInstruction)
+return require('libmodal').mode.enter('TABS', _combos)
