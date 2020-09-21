@@ -7,5 +7,5 @@ nnoremap <silent> <unique> <Plug>(TabmodeEnter) <Cmd>lua require('tabmode')<CR>
 nmap <silent> <unique> <leader><Tab> <Plug>(TabmodeEnter)
 
 if !exists(':TabmodeEnter')
-	command! TabmodeEnter lua require('tabmode'):enter()
+	command! TabmodeEnter lua require('tabmode')
 endif

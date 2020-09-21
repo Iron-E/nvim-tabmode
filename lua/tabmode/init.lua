@@ -57,8 +57,8 @@ end
 
 -- Synonyms for '0'
 _combo_link('^', '0')
-_combo_link(_to_char('<Home>'), '0')
-_combo_link(_to_char('<Up>'), '0')
+_combo_link(_to_char('<Home>') , '0')
+_combo_link(_to_char('<Up>')   , '0')
 
 -- Synonyms for ')'
 _combo_link(_to_char('<S-Home>'), ')')
@@ -102,4 +102,6 @@ _combo_link(_to_char('<S-PageDown>'), 'W')
 	 */
 --]]
 
-return require('libmodal').mode.enter('TABS', _combos)
+return function()
+	require('libmodal').mode.enter('TABS', _combos)
+end
