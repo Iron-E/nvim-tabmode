@@ -22,7 +22,7 @@ local _combos = {
 	['s'] = function() vim.fn.execute {'tabnew', 'tabprevious', 'tabclose'} end,
 	['t'] = function()
 		vim.ui.input(
-			{completion = 'dir', prompt = [[Select new `tcd`:]]},
+			{completion = 'dir', prompt = 'Select new `tcd`: '},
 			function(dir)
 				if dir then
 					vim.api.nvim_command('tcd '.. dir)
