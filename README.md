@@ -4,16 +4,17 @@
 
 Although it is recommended that splits and buffers are used over tabs when possible, there _are_ scenarios when tabs are necessary. This plugin hopes to make that easier.
 
-# Requirements
+## Requirements
 
+* Neovim 0.7
 * [nvim-libmodal](https://github.com/Iron-E/nvim-libmodal)
 * [vim-tabmode](https://github.com/Iron-E/vim-tabmode) is __NOT__ installed.
 
-# Installation
+## Installation
 
 Either use `packadd` or any package manager.
 
-## Examples
+### Examples
 
 * [dein.vim](https://github.com/Shougo/dein.vim):
 	* Add `call dein#add('https://github.com/Iron-E/nvim-tabmode')` to `~/.vimrc`
@@ -28,7 +29,7 @@ Either use `packadd` or any package manager.
 	* Add `Plugin 'https://github.com/Iron-E/nvim-tabmode'` to `~/.vimrc`
 	* `:PluginInstall` or `$ vim +PluginInstall +qall`
 
-# Usage
+## Usage
 
 Enter `nvim-tabmode` with `<leader><Tab>` or `:TabmodeEnter`.
 
@@ -51,7 +52,7 @@ Enter `nvim-tabmode` with `<leader><Tab>` or `:TabmodeEnter`.
 
 See `:help tabmode-usage` for additional details.
 
-# Documentation
+## Documentation
 
 ```vim
 :help tabmode
