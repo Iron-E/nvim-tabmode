@@ -1,25 +1,19 @@
---[[/* MODULE */]]
-
--- Wrap some vim command in a function.
-local function cmd(command)
-	return function() vim.api.nvim_command(command) end
-end
-
--- the key combos for this mode.
-local _combos = {
-	['$'] = cmd 'tablast',
-	['%'] = cmd '$tabmove',
-	[')'] = cmd '0tabmove',
-	['0'] = cmd 'tabfirst',
-	['?'] = cmd 'help tabmode-usage',
-	['a'] = cmd 'tabnew',
-	['A'] = cmd '$tabnew',
-	['b'] = cmd 'tabprevious',
-	['B'] = cmd '-tabmove',
-	['d'] = cmd 'tabclose',
-	['i'] = cmd '-tabnew',
-	['I'] = cmd '0tabnew',
-	['s'] = function() vim.fn.execute {'tabnew', 'tabprevious', 'tabclose'} end,
+--- The keymaps for this mode
+local MODE_KEYMAPS =
+{
+	['$'] = 'tablast',
+	['%'] = '$tabmove',
+	[')'] = '0tabmove',
+	['0'] = 'tabfirst',
+	['?'] = 'help tabmode-usage',
+	['a'] = 'tabnew',
+	['A'] = '$tabnew',
+	['b'] = 'tabprevious',
+	['B'] = '-tabmove',
+	['d'] = 'tabclose',
+	['i'] = '-tabnew',
+	['I'] = '0tabnew',
+	['s'] = function() vim.api.nvim_command 'tabnew | tabprevious | tabclose' end,
 	['t'] = function()
 		vim.ui.input(
 			{completion = 'dir', prompt = 'Select new `tcd`: '},
@@ -30,63 +24,108 @@ local _combos = {
 			end
 		)
 	end,
-	['w'] = cmd('tabnext'),
-	['W'] = cmd('+tabmove'),
+	['w'] = 'tabnext',
+	['W'] = '+tabmove',
 }
 
--- create a `new` link for some `existing` mapping
-local function inherit(new, existing)
-	_combos[new] = _combos[existing]
+--- @type boolean|nil
+--- whether the previous `setup` call was done automatically by the `plugin` folder
+local prev_setup_auto
+
+--[[/* MODULE */]]
+
+--- @class bufmode.options
+--- @field auto boolean whether the `setup` call was performed by the `plugin/bufmode.lua` file
+--- @field enter_mapping false|string custom binding to enter buffers mode
+--- @field keymaps? {[string]: fun()|string} custom key bindings to apply
+local DEFAULT_OPTS =
+{
+	auto = false,
+	enter_mapping = '<leader><tab>',
+	keymaps = nil,
+}
+
+--- @class bufmode
+local tabmode = {}
+
+--- @param opts? bufmode.options
+function tabmode.setup(opts)
+	--- @type bufmode.options
+	opts = opts and vim.tbl_extend('keep', opts, DEFAULT_OPTS) or vim.deepcopy(DEFAULT_OPTS)
+
+	-- if a setup was already run, don't automatically run it again.
+	if opts.auto and prev_setup_auto ~= nil then
+		return
+	end
+
+	-- add user mappings
+	local keymaps = vim.deepcopy(MODE_KEYMAPS)
+
+	--- create a link to some existing mapping
+	--- @param parent string
+	--- @param children string[]
+	local function inherit(parent, children)
+		for _, child in ipairs(children) do
+			keymaps[child] = keymaps[parent]
+		end
+	end
+
+	--- Turn some special character value into a character code.
+	--- @param val string
+	--- @return string termcodes_replaced
+	local function tochar(val)
+		return vim.api.nvim_replace_termcodes(val, true, true, true)
+	end
+
+	inherit('0', {'^' , tochar '<Home>', tochar '<Up>'})
+	inherit(')', {tochar '<S-Home>', tochar '<S-Up>'})
+	inherit('$', {tochar '<End>', tochar '<Down>'})
+	inherit('%', {tochar '<S-End>' , tochar '<S-Down>'})
+	inherit('b', {'j', 'h', tochar '<Left>', tochar '<PageUp>'})
+	inherit('B', {'J', 'H', tochar '<S-Left>', tochar '<S-PageUp>'})
+	inherit('w', {'k', 'l', tochar '<Right>', tochar '<PageDown>'})
+	inherit('W', {'K', 'L', tochar '<S-Right>', tochar '<S-PageDown>'})
+
+	if vim.g.bufmode_mappings then
+		keymaps = vim.tbl_extend('force', keymaps, vim.g.bufmode_mappings)
+	elseif opts.keymaps then
+		keymaps = vim.tbl_extend('force', keymaps, opts.keymaps)
+	end
+
+	if prev_setup_auto == true
+		and opts.enter_mapping ~= DEFAULT_OPTS.enter_mapping
+		and vim.fn.maparg(DEFAULT_OPTS.enter_mapping):match 'bufmode'
+	then
+		vim.api.nvim_del_keymap('n', DEFAULT_OPTS.enter_mapping)
+	end
+
+	--- the description for all keymaps
+	local DESC = 'Enter buffer mode'
+
+	--- enter the buffer mode
+	local function mode()
+		require('libmodal').mode.enter('TABS', keymaps)
+	end
+
+	-- setup `enter_mapping`, unless it was automatically setup and there's no override
+	if opts.enter_mapping ~= false and (
+		(opts.auto and vim.fn.maparg(opts.enter_mapping) == '')
+		or (not opts.auto and not vim.deep_equal(opts, DEFAULT_OPTS))
+	) then
+		vim.api.nvim_set_keymap('n', opts.enter_mapping, '', {callback = mode, desc = DESC})
+	end
+
+	--- The name of the user-command which enters the buffer mode.
+	local CMD_NAME = 'TabmodeEnter'
+
+	vim.api.nvim_create_user_command(CMD_NAME, mode, {desc = DESC})
+
+	-- first setup things
+	if prev_setup_auto == nil then
+		vim.api.nvim_set_keymap('n', '<Plug>(' .. CMD_NAME .. ')', '<Cmd>' .. CMD_NAME .. '<CR>', {desc = DESC})
+	end
+
+	prev_setup_auto = opts.auto
 end
 
--- Turn some special character value into a character code.
-local function char(val)
-	return vim.api.nvim_replace_termcodes(val, true, true, true)
-end
-
--- Synonyms for '0'
-inherit('^', '0')
-inherit(char '<Home>' , '0')
-inherit(char '<Up>'   , '0')
-
--- Synonyms for ')'
-inherit(char '<S-Home>', ')')
-inherit(char '<S-Up>', ')')
-
--- Synonyms for '$'
-inherit(char '<End>', '$')
-inherit(char '<Down>', '$')
-
--- Synonyms for '%'
-inherit(char '<S-End>', '%')
-inherit(char '<S-Down>', '%')
-
--- Synonyms for 'b'
-inherit('j', 'b')
-inherit('h', 'b')
-inherit(char '<Left>', 'b')
-inherit(char '<PageUp>', 'b')
-
--- Synonyms for 'B'
-inherit('J', 'B')
-inherit('H', 'B')
-inherit(char '<S-Left>', 'B')
-inherit(char '<S-PageUp>', 'B')
-
--- Synonyms for 'w'
-inherit('k', 'w')
-inherit('l', 'w')
-inherit(char '<Right>', 'w')
-inherit(char '<PageDown>', 'w')
-
--- Synonyms for 'W'
-inherit('K', 'W')
-inherit('L', 'W')
-inherit(char '<S-Right>', 'W')
-inherit(char '<S-PageDown>', 'W')
-
---[[/* PUBLICIZE MODULE */]]
-
-return function()
-	require('libmodal').mode.enter('TABS', _combos)
-end
+return tabmode
