@@ -28,6 +28,31 @@ local MODE_KEYMAPS =
 	['W'] = '+tabmove',
 }
 
+--- create a link to some existing mapping
+--- @param parent string
+--- @param children string[]
+local function inherit(parent, children)
+	for _, child in ipairs(children) do
+		MODE_KEYMAPS[child] = MODE_KEYMAPS[parent]
+	end
+end
+
+--- Turn some special character value into a character code.
+--- @param val string
+--- @return string termcodes_replaced
+local function tochar(val)
+	return vim.api.nvim_replace_termcodes(val, true, true, true)
+end
+
+inherit('0', {'^' , tochar '<Home>', tochar '<Up>'})
+inherit(')', {tochar '<S-Home>', tochar '<S-Up>'})
+inherit('$', {tochar '<End>', tochar '<Down>'})
+inherit('%', {tochar '<S-End>' , tochar '<S-Down>'})
+inherit('b', {'j', 'h', tochar '<Left>', tochar '<PageUp>'})
+inherit('B', {'J', 'H', tochar '<S-Left>', tochar '<S-PageUp>'})
+inherit('w', {'k', 'l', tochar '<Right>', tochar '<PageDown>'})
+inherit('W', {'K', 'L', tochar '<S-Right>', tochar '<S-PageDown>'})
+
 --- @type boolean|nil
 --- whether the previous `setup` call was done automatically by the `plugin` folder
 local prev_setup_auto
@@ -38,12 +63,7 @@ local prev_setup_auto
 --- @field auto boolean whether the `setup` call was performed by the `plugin/bufmode.lua` file
 --- @field enter_mapping false|string custom binding to enter buffers mode
 --- @field keymaps? {[string]: fun()|string} custom key bindings to apply
-local DEFAULT_OPTS =
-{
-	auto = false,
-	enter_mapping = '<leader><tab>',
-	keymaps = nil,
-}
+local DEFAULT_OPTS = {auto = false, enter_mapping = '<leader><tab>', keymaps = nil}
 
 --- @class bufmode
 local tabmode = {}
@@ -59,33 +79,7 @@ function tabmode.setup(opts)
 	end
 
 	-- add user mappings
-	local keymaps = vim.deepcopy(MODE_KEYMAPS)
-
-	--- create a link to some existing mapping
-	--- @param parent string
-	--- @param children string[]
-	local function inherit(parent, children)
-		for _, child in ipairs(children) do
-			keymaps[child] = keymaps[parent]
-		end
-	end
-
-	--- Turn some special character value into a character code.
-	--- @param val string
-	--- @return string termcodes_replaced
-	local function tochar(val)
-		return vim.api.nvim_replace_termcodes(val, true, true, true)
-	end
-
-	inherit('0', {'^' , tochar '<Home>', tochar '<Up>'})
-	inherit(')', {tochar '<S-Home>', tochar '<S-Up>'})
-	inherit('$', {tochar '<End>', tochar '<Down>'})
-	inherit('%', {tochar '<S-End>' , tochar '<S-Down>'})
-	inherit('b', {'j', 'h', tochar '<Left>', tochar '<PageUp>'})
-	inherit('B', {'J', 'H', tochar '<S-Left>', tochar '<S-PageUp>'})
-	inherit('w', {'k', 'l', tochar '<Right>', tochar '<PageDown>'})
-	inherit('W', {'K', 'L', tochar '<S-Right>', tochar '<S-PageDown>'})
-
+	local keymaps = MODE_KEYMAPS
 	if vim.g.bufmode_mappings then
 		keymaps = vim.tbl_extend('force', keymaps, vim.g.bufmode_mappings)
 	elseif opts.keymaps then
